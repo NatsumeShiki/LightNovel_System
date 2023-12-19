@@ -1,0 +1,65 @@
+{% extends 'lightnovel.html' %}
+
+{% block content %}
+    <div class="container">
+        <div style="margin-bottom: 20px;" class="clearfix">
+            <nav class="navbar">
+              <a href="/lightnovel/add/">
+                <input type="submit" value="添加小说" class="btn btn-success" id="btnAdd" data-toggle="modal" data-target="#myModal" />
+              </a>
+              <form class="form-inline" method="get">
+                <input class="form-control mr-sm-2" type="search" placeholder="关键字" aria-label="Search" name="q" value="{{ search_data }}">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+              </form>
+            </nav>
+        </div>
+        <div class="card" >
+          <div class="card-header">小说列表</div>
+          <div class="card-body" style="padding: 0px;">
+            <table class="table table-striped" style="margin-bottom: 0px;">
+              <thead>
+                <tr>
+                  <th scope="col" style="text-align: center;">ID</th>
+                  <th scope="col" style="text-align: center;">小说名</th>
+                  <th scope="col" style="text-align: center;">卷数</th>
+                  <th scope="col" style="text-align: center;">出版日期</th>
+                  <th scope="col" style="text-align: center;">作者</th>
+                  <th scope="col" style="text-align: center;">插画师</th>
+                  <th scope="col" style="text-align: center;">出版社</th>
+                  <th scope="col" style="text-align: center;">类型</th>
+                  <th scope="col" style="text-align: center;">是否完结</th>
+                  <th scope="col" style="text-align: center;">详情</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for obj in queryset %}
+                <tr>
+                  <th scope="row" style="text-align: center; " >{{ obj.book_id }}</th>
+                  <td style="text-align: center; ">{{ obj.name }}</td>
+                  <td style="text-align: center; ">{{ obj.count }}</td>
+                  <td style="text-align: center;">{{ obj.date }}</td>
+                  <td style="text-align: center;">{{ obj.author }}</td>
+                  <td style="text-align: center;">{{ obj.illustrator }}</td>
+                  <td style="text-align: center;">{{ obj.publisher }}</td>
+                  <td style="text-align: center;">{{ obj.type }}</td>
+                  <td style="text-align: center;">{{ obj.get_update_display }}</td>
+                  <td style="text-align: center;">
+                      <a href="/lightnovel/{{ obj.book_id }}/detail/" type="button" class="btn btn-primary btn-sm btn-edit" value="编辑">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-right-circle" viewBox="0 0 16 16">
+                          <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.854 10.803a.5.5 0 1 1-.708-.707L9.243 6H6.475a.5.5 0 1 1 0-1h3.975a.5.5 0 0 1 .5.5v3.975a.5.5 0 1 1-1 0V6.707l-4.096 4.096z"/>
+                        </svg>
+                          跳转
+                      </a>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <ul class="pagination"  style="margin-top: 30px;">
+            {{ page_string }}
+        </ul>
+    </div>
+{% endblock %}

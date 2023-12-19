@@ -1,0 +1,276 @@
+{% extends 'illustrator.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div style="margin-bottom: 20px;" class="clearfix">
+            <nav class="navbar">
+                <input type="submit" value="添加插画师" class="btn btn-primary" id="btnAdd" data-toggle="modal" data-target="#myModal" />
+              <form class="form-inline" method="get">
+                <input class="form-control mr-sm-2" type="search" placeholder="关键字" aria-label="Search" name="q" value="{{ search_data }}">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+              </form>
+            </nav>
+        </div>
+        <div class="card" >
+          <div class="card-header">插画师列表</div>
+          <div class="card-body" style="padding: 0px;">
+            <table class="table table-striped" style="margin-bottom: 0px;">
+              <thead>
+                <tr>
+                  <th scope="col" style="text-align: center;">ID</th>
+                  <th scope="col" style="text-align: center;">作者姓名</th>
+                  <th scope="col" style="text-align: center;">性别</th>
+                  <th scope="col" style="text-align: center;">出生时间</th>
+                  <th scope="col" style="text-align: center;">邮箱</th>
+                  <th scope="col" style="text-align: center;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for obj in queryset %}
+                <tr>
+                  <th scope="row" style="text-align: center; " >{{ obj.illustrator_id }}</th>
+                  <td style="text-align: center; ">{{ obj.name }}</td>
+                  <td style="text-align: center; ">{{ obj.get_gender_display }}</td>
+                  <td style="text-align: center;">{{ obj.date }}</td>
+                  <td style="text-align: center;">{{ obj.email }}</td>
+                  <td style="text-align: center;">
+                      <input uid="{{ obj.illustrator_id }}" type="button" class="btn btn-primary btn-sm btn-edit" value="编辑"/>
+                      <input uid="{{ obj.illustrator_id }}" type="button" class="btn btn-danger btn-sm btn-delete" value="删除" />
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <nav aria-label="Page navigation example" style="margin-top: 40px;">
+            <ul class="pagination">
+                {{ page_string }}
+            </ul>
+        </nav>
+    </div>
+
+    {#    添加/编辑 订单模态框  #}
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <h6 class="modal-title" id="myModalLabel"></h6>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              </div>
+              <div class="modal-body">
+                <form id="formAdd">
+                        <div class="clearfix">
+                            {% for field in form %}
+                                <div class="col-xs-6">
+                                    <div class="form-group" style="position: relative;margin-bottom: 20px;">
+                                        <label>{{ field.label }}</label>
+                                        {{ field }}
+                                        <span class="error-msg" style="color: red;position: absolute;"></span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button id="btnSave" type="button" class="btn btn-primary">保存</button>
+              </div>
+            </div>
+          </div>
+      </div>
+
+    {#    删除订单模态框#}
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title" style="color: red;">删除</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <p style="margin: 10px 0;">删除后，所有关联的相关数据都会被删除。</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="btnConfirmDelete">确定</button>
+        <button type="button" class="btn btn-default" id="btnCancel">取消</button>
+          </div>
+        </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js' %}"></script>
+    <script type="text/javascript">
+        var DELETE_ID;
+        var EDIT_ID;
+        $(function(){
+            bindBtnAddEvent();
+
+            bindBtnSaveEvent();
+
+            bindBtnDeleteEvent();
+            bindBtnConfirmDeleteEvent();
+            bindBtnCancelEvent();
+
+            bindBtnEditEvent();
+        })
+
+        function bindBtnAddEvent(){
+            $("#btnAdd").click(function (){
+                EDIT_ID = undefined;
+                $("#formAdd")[0].reset();
+                $("#myModalLabel").text("新建");
+                $('#myModal').modal('show');
+            })
+        }
+
+        function bindBtnSaveEvent(){
+            $("#btnSave").click(function (){
+
+                $(".error-msg").empty();
+
+                if(EDIT_ID){
+                    doEdit();
+                }else{
+                    doAdd();
+                }
+
+            })
+        }
+
+        function doEdit(){
+            $.ajax({
+                    url: '/illustrator/edit/?uid=' + EDIT_ID,
+                    type: 'post',
+                    data: $("#formAdd").serialize(),
+                    dataType: "json",
+                    success: function(res){
+                        if(res.status){
+                            {#alert("创建成功");#}
+                            $("#formAdd")[0].reset();
+                            $('#myModal').modal('hide');
+                            location.reload();
+                        }else{
+                            if(res.tips){
+                                alert(res.tips);
+                            }else{
+                                $.each(res.error, function(name, errorList){
+                                    $("#id_" + name).next().text(errorList[0])
+                                })
+                            }
+                        }
+                    }
+                })
+        }
+
+        function doAdd(){
+            $.ajax({
+                    url: '/illustrator/add/',
+                    type: 'post',
+                    data: $("#formAdd").serialize(),
+                    dataType: "json",
+                    success: function(res){
+                        if(res.status){
+                            {#alert("创建成功");#}
+                            $("#formAdd")[0].reset();
+                            $('#myModal').modal('hide');
+                            location.reload();
+                        }else{
+                            $.each(res.error, function(name, errorList){
+                                $("#id_" + name).next().text(errorList[0])
+                            })
+                        }
+                    }
+                })
+        }
+
+        function bindBtnDeleteEvent(){
+            $(".btn-delete").click(function () {
+                {#alert("点击了删除");#}
+                $("#deleteModal").modal("show");
+
+                DELETE_ID = $(this).attr("uid");
+            })
+        }
+
+        function bindBtnConfirmDeleteEvent(){
+            $("#btnConfirmDelete").click(function(){
+                $.ajax({
+                    url: "/illustrator/delete/",
+                    type: "GET",
+                    data:{
+                        uid: DELETE_ID
+                    },
+                    dataType: "JSON",
+                    success: function(res){
+                        if(res.status){
+                            $("#deleteModal").modal("hide");
+                            DELETE_ID = 0;
+                            location.reload();
+                        }else{
+                            alert("删除失败");
+                        }
+                    }
+                })
+            })
+        }
+
+        function bindBtnCancelEvent(){
+            $("#btnCancel").click(function (){
+                $("#deleteModal").modal("hide");
+            })
+        }
+
+        function bindBtnEditEvent(){
+            $(".btn-edit").click(function (){
+                var uid = $(this).attr("uid");
+                $("#formAdd")[0].reset();
+                {#$("#myModalLabel").text("编辑")#}
+                {#$("#myModal").modal('show');#}
+                EDIT_ID = uid;
+                $.ajax({
+                    url: "/illustrator/detail/",
+                    type: "GET",
+                    data: {
+                        uid: uid
+                    },
+                    dataType: "JSON",
+                    success: function (res){
+                        if(res.status){
+                            console.log(res);
+                            $("#myModalLabel").text("编辑");
+                            $("#myModal").modal("show");
+                            $.each(res.data, function(name, value){
+                                $("#id_" + name).val(value);
+                            })
+                        }else{
+                            alert(res.error);
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+    <script>
+        $(function(){
+            $("#id_date").datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: '1900-01-01',
+                language: "zh-CN",
+                autoclose: true
+            });
+        })
+
+
+    </script>
+{% endblock %}

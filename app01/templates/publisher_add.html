@@ -1,0 +1,44 @@
+{% extends 'publisher.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="card">
+          <div class="card-header">
+            添加出版社
+          </div>
+          <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                  <div class="form-group">
+                    <label style="font-weight: bold;">{{ field.label }}</label>
+                      {{ field }}
+                      <span style="color: red">{{ field.errors.0 }}</span>
+                  </div>
+                {% endfor %}
+              <button type="submit" class="btn btn-primary">添 加</button>
+            </form>
+          </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js' %}"></script>
+    <script>
+        $(function(){
+            $("#dt").datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: '1900-01-01',
+                language: "zh-CN",
+                autoclose: true
+            });
+        })
+    </script>
+{% endblock %}

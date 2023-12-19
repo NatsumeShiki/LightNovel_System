@@ -1,0 +1,53 @@
+{% extends 'publisher.html' %}
+
+{% block content %}
+    <div class="container">
+        <div style="margin-bottom: 20px;" class="clearfix">
+            <nav class="navbar">
+            <a class="btn btn-primary" href="/publisher/add/">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                添加出版社
+            </a>
+          <form class="form-inline" method="get">
+            <input class="form-control mr-sm-2" type="search" placeholder="关键字" aria-label="Search" name="q" value="{{ search_data }}">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form>
+        </nav>
+        </div>
+        <div class="card" >
+          <div class="card-header">出版社列表</div>
+          <div class="card-body" style="padding: 0px;">
+            <table class="table table-striped" style="margin-bottom: 0px;">
+              <thead>
+                <tr>
+                  <th scope="col" style="text-align: center;" class="col-sm-1">ID</th>
+                  <th scope="col" style="text-align: center;" class="col-sm-2">出版社名称</th>
+                  <th scope="col" style="text-align: center;" class="col-sm-2">创立日期</th>
+                  <th scope="col" style="text-align: center;" class="col-sm-5">简介</th>
+                  <th scope="col" style="text-align: center;" class="col-sm-2">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for obj in queryset %}
+                <tr>
+                  <th scope="row" style="text-align: center; " >{{ obj.publisher_id }}</th>
+                  <td style="text-align: center; ">{{ obj.name }}</td>
+                  <td style="text-align: center; ">{{ obj.date }}</td>
+                  <td style="text-align: center;">{{ obj.introduction }}</td>
+                  <td style="text-align: center;">
+                      <a class="btn btn-primary btn-sm" href="/publisher/{{ obj.publisher_id }}/edit/">编辑</a>
+                      <a class="btn btn-danger btn-sm" href="/publisher/delete/?nid={{ obj.publisher_id }}">删除</a>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <nav aria-label="Page navigation example" style="margin-top: 40px;">
+            <ul class="pagination">
+                {{ page_string }}
+            </ul>
+        </nav>
+    </div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'lightnovel.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container" style="margin-top: 30px;">
+        <div style="background-color: white; padding: 30px; height: 600px;">
+            <div style="margin-bottom: 30px;">
+                <a href="javascript:history.back(-1)" class="btn btn-success">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>
+                </svg> 返 回</a>
+            </div>
+            <span style=" float: left">
+                <img style="width: 300px; margin-right: 20px; " src="/media/{{ obj.image }}" class="rounded float-left" alt="...">
+            </span>
+            <span>
+                <h2 style="font-family: 楷体; font-weight: bold;">{{ obj.name }}</h2>
+                <div style="font-family: 楷体; font-weight: bold; font-size: 20px;">{{ obj.author }} 著</div>
+                <div style="font-family: 楷体; font-weight: bold; font-size: 20px;">{{ obj.illustrator }} 画</div>
+                <div style="font-family: 楷体; font-weight: bold; font-size: 20px;">{{ obj.publisher }} 出版社</div>
+                <div style="font-family: 楷体; font-weight: bold; font-size: 20px;">{{ obj.count }} 卷</div>
+                <div style="font-family: 楷体; font-weight: bold; font-size: 20px;">{{ obj.get_update_display }} </div>
+                <div style="font-family: 楷体; font-weight: bold; font-size: 20px;">出版日期：{{ obj.date }}</div>
+                <p style=>{{ obj.introduction }}</p>
+                <div>
+                    <a href="/lightnovel/{{ obj.book_id }}/edit/" type="button" class="btn btn-primary btn-xs btn-edit" value="编辑">修改</a>
+                    <a href="/lightnovel/{{ obj.book_id }}/delete/" type="button" class="btn btn-primary btn-xw btn-danger" value="删除">删除</a>
+                </div>
+            </span>
+        </div>
+    </div>
+{% endblock %}

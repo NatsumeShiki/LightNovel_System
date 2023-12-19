@@ -1,0 +1,45 @@
+{% extends 'lightnovel.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="card">
+          <div class="card-header">
+              {{ title }}
+          </div>
+          <div class="card-body">
+            <form method="post" novalidate enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                  <div class="form-group">
+                    <label style="font-weight: bold;">{{ field.label }}</label>
+                      {{ field }}
+                      <span style="color: red">{{ field.errors.0 }}</span>
+                  </div>
+                {% endfor %}
+              <button type="submit" class="btn btn-primary">添 加</button>
+              <a href="javascript:history.back(-1)" class="btn btn-dark">取消</a>
+            </form>
+          </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js' %}"></script>
+    <script>
+        $(function(){
+            $("#dt").datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: '1900-01-01',
+                language: "zh-CN",
+                autoclose: true
+            });
+        })
+    </script>
+{% endblock %}
